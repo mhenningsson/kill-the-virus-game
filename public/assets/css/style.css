@@ -1,6 +1,7 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
@@ -34,4 +35,46 @@ body {
 
 #username-form input {
   margin-bottom: 1.5em;
+}
+
+
+#game-page {
+  display: flex;
+  width: 70vw;
+  
+  background-color: rgba(0, 78, 78, 0.5);
+  padding: 2.7em 4em;
+}
+
+#game-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+#game {
+  background-color: rgba(0, 78, 78, 0.7); 
+  border: 1px solid whitesmoke;
+  
+  margin: 1em 2.5em 1em 0;
+  width: 90%;
+  height: 50vh;
+}
+
+#virus {
+  display: block;
+  width: 4em;
+  margin-top: 6em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#users-board {
+  flex-basis: 20%;
+  border-left: 1px solid whitesmoke;
+  padding: 1em;
+}
+
+.hide {
+  display: none !important;
 }
