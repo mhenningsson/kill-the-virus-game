@@ -4,9 +4,26 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Kill The Virus</title>
+
+		<!-- Bootstrap -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+		<!-- CSS -->
+		<link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-	<h1>Let's kill this virus!</h1>
+	<div id="app" class="container-fluid">
+		<div id="start">
+			<h1>Are you ready to kill the virus?</h1>
+			<form id="username-form">
+				<div class="form-group form-group-lg">
+					<input type="text" id="username" class="form-control form-control-lg" aria-label="input field for username" placeholder="Username" required>
+					<button type="submit" id="createUser" class="btn btn-light btn-lg">Play Game</button>
+				</div>
+			</form>
+
+		</div>
+	</div>
 	
 </body>
 </html>

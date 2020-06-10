@@ -1,8 +1,37 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+* {
+  margin: 0;
+  padding: 0;
 }
 
-a {
-  color: #00B7FF;
+body {
+  background-color: cadetblue;
+  color: whitesmoke;
+}
+
+#app {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#start {
+  background-color: rgba(0, 78, 78, 0.5);
+  padding: 2em 3em;
+}
+
+#start h1 {
+  font-size: 2em;
+  margin-bottom: 1.5em;
+  text-transform: uppercase;
+}
+
+#username-form div.form-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#username-form input {
+  margin-bottom: 1.5em;
 }
