@@ -75,6 +75,10 @@ body {
   padding: 1em;
 }
 
+#users-board li.users {
+  list-style: none;
+}
+
 .hide {
   display: none !important;
 }

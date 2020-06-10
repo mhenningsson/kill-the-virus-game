@@ -8,7 +8,7 @@ require('dotenv').config();
 const app = require('../app');
 const debug = require('debug')('kill-the-virus-game:server');
 const http = require('http');
-const SocketIO = require('socket.io');
+const socketIO = require('socket.io');
 
 /**
  * Get port from environment and store in Express.
@@ -22,7 +22,9 @@ app.set('port', port);
  */
 
 const server = http.createServer(app);
-const io = SocketIO(server);
+const io = socketIO(server);
+
+io.on('connection', require('../controllers/socket_controller'))
 
 /**
  * Listen on provided port, on all network interfaces.

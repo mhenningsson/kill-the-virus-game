@@ -15,7 +15,7 @@
 	<div id="app" class="container-fluid">
 
 		<!-- Start page, adding username -->
-		<div id="start" class="hide">
+		<div id="start" class="">
 			<h1>Are you ready to kill the virus?</h1>
 
 			<form id="username-form">
@@ -27,10 +27,11 @@
 		</div> <!-- end "start" div -->
 
 		<!-- Game page -->
-		<div id="game-page" class="">
+		<div id="game-page" class="hide">
 	
 			<div id="game-wrapper">
 				<h1>Kill The Virus</h1>
+				<p>Click the virus as fast as you can!</p>
 				<div id="game">
 					<img id="virus" src="assets/images/virus.svg">
 				</div>
@@ -38,8 +39,8 @@
 
 			<div id="users-board">
 				<h2>Users:</h2>
-				<p>User 1</p>
-				<p>User 2</p>
+				<ul id="online">
+				</ul>
 
 				<p>1 - 3</p>
 				<p>time</p>
@@ -49,5 +50,8 @@
 		</div>
 
 	</div> <!-- end "app" div-->
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="assets/js/game.js"></script>
 </body>
 </html>
