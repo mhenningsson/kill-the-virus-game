@@ -40,7 +40,7 @@ body {
 
 #game-page {
   display: flex;
-  width: 70vw;
+  width: 90vw;
   
   background-color: rgba(0, 78, 78, 0.5);
   padding: 2.7em 4em;
@@ -53,20 +53,18 @@ body {
 }
 
 #game {
-  background-color: rgba(0, 78, 78, 0.7); 
-  border: 1px solid whitesmoke;
-  
-  margin: 1em 2.5em 1em 0;
-  width: 90%;
-  height: 50vh;
+background-color: rgba(0, 78, 78, 0.7); 
+border: 1px solid whitesmoke;
+
+margin: 1em 2.5em 1em 0;
+min-width: 90%;
+min-height: 60vh;
 }
 
 #virus {
+  position: relative;
   display: block;
   width: 4em;
-  margin-top: 6em;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 #users-board {

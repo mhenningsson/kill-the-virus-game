@@ -15,7 +15,7 @@
 	<div id="app" class="container-fluid">
 
 		<!-- Start page, adding username -->
-		<div id="start" class="">
+		<div id="start">
 			<h1>Are you ready to kill the virus?</h1>
 
 			<form id="username-form">
@@ -26,19 +26,23 @@
 			</form>
 		</div> <!-- end "start" div -->
 
+		<!-- Waiting room -->
+		<div id="waiting-room" class="hide">
+			<p>Waiting for another player to join the game...</p>
+		</div>
+
 		<!-- Game page -->
 		<div id="game-page" class="hide">
-	
+			
 			<div id="game-wrapper">
 				<h1>Kill The Virus</h1>
-				<p>Click the virus as fast as you can!</p>
 				<div id="game">
-					<img id="virus" src="assets/images/virus.svg">
+					<img id="virus" class="hide" src="assets/images/virus.svg">
 				</div>
 			</div>
 
 			<div id="users-board">
-				<h2>Users:</h2>
+				<h2>Players:</h2>
 				<ul id="online">
 				</ul>
 

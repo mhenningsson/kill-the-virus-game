@@ -7,7 +7,7 @@ const users = {};
 // Get username of online users
 function getOnlineUsers() {
     return Object.values(users);
-}
+};
 
 // Handle register a new user
 function handleRegisterUser(username, callback) {
@@ -21,14 +21,26 @@ function handleRegisterUser(username, callback) {
     this.broadcast.emit('new-user-connected', username);
 
     this.broadcast.emit('online-users', getOnlineUsers());
-}
+};
+
+// User disconnecting
+function handleUserDisconnect() {
+    debug(users[this.id] + 'left the chat');
+    if (users[this.id]) {
+        this.broadcast.emit('user-disconnected', users[this.id]);
+    }
+
+    delete users[this.id];
+};
 
 module.exports = function(socket) {
     debug('A client connected: ', socket.id);
 
-    socket.on('disconnect', () => {
-        debug('A client disconnected: ', socket.id);
-    })
+    socket.on('disconnect', handleUserDisconnect);
 
     socket.on('register-user', handleRegisterUser);
-;}
+
+    socket.on('new-user-connected', (username) => {
+        debug(username + ' connected to chat')
+    });
+};
