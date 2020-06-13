@@ -39,15 +39,17 @@ function loadBoxWidhtAndHeight() {
 }
 
 // Randomly position image
-const outputRandomImagePosition = (y, x) => {
+const outputRandomImagePosition = (y, x, delay) => {
     console.log('Random numbers: ', y, x);
     
     document.querySelector('#virus').style.top = y + "px";
     document.querySelector('#virus').style.left = x + "px";
 
-    document.querySelector('#virus').classList.remove('hide');
+    setTimeout(function() {
+        document.querySelector('#virus').classList.remove('hide');
+    }, delay);
 
-    console.log('New image position')
+    console.log('New image position with delay: ', delay)
 };
 
 // Game over because a player left the game

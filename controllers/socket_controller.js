@@ -24,9 +24,9 @@ function createVirusPosition(availableSpace) {
     const y = Math.floor(Math.random() * availableSpace.y);
     const x = Math.floor(Math.random() * availableSpace.x);
 
-    // const delay = Math.floor(Math.random() * 10000);
+    const delay = Math.floor(Math.random() * 10000);
 
-    io.emit('load-image-position', y, x);
+    io.emit('load-image-position', y, x, delay);
 }
 
 // Check if two players are online
