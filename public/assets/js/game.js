@@ -18,15 +18,16 @@ const updateOnlineUsers = (users) => {
 };
 
 // Showing game if number of users is two
-const showGame = () => {
+const showGamePage = () => {
     waitingEl.classList.add('hide');
     gamePageEl.classList.remove('hide');
 
-    loadBoxWidhtAndHeight();
+    // getAvailableSpace();
 }
 
 // Loading space for virus to position on
-function loadBoxWidhtAndHeight() {
+function getAvailableSpace(id) {
+    console.log('getting available space for id: ', id)
     const boxHeight = document.querySelector('#game').clientHeight;
     const boxWidth = document.querySelector('#game').clientWidth;
     
@@ -39,8 +40,8 @@ function loadBoxWidhtAndHeight() {
 }
 
 // Randomly position image
-const outputRandomImagePosition = (y, x, delay) => {
-    console.log('Random numbers: ', y, x);
+const outputRandomImagePosition = (y, x, delay, user, timer) => {
+    console.log('Random numbers from user: ', y, x, user);
     
     document.querySelector('#virus').style.top = y + "px";
     document.querySelector('#virus').style.left = x + "px";
@@ -58,6 +59,15 @@ const gameOverBecausePlayerLeft = (username) => {
 
     document.querySelector('#player-disconnected').classList.remove('hide');
 }
+
+// Listen to click on game
+document.querySelector('#virus').addEventListener('click', (e) => {
+    console.log('Click!');
+
+    document.querySelector('#virus').classList.add('hide');
+    socket.emit('clicked-virus', [socket.id], Date.now());
+})
+
 
 // Register new user from startpage
 usernameForm.addEventListener('submit', (e) => {
@@ -79,7 +89,9 @@ usernameForm.addEventListener('submit', (e) => {
 });
 
 
-// Sockets
+/**
+ * Sockets for user registration and diconnection
+ */
 socket.on('reconnect', () => {
     if (username) {
         socket.emit('register-user', username, () => {
@@ -87,20 +99,21 @@ socket.on('reconnect', () => {
         })
     }
 })
-
 socket.on('online-users', (users) => {
     updateOnlineUsers(users);
 });
-
 socket.on('new-user-connected', username  => {
     console.log(username + 'connected to the chat');
 });
-
 socket.on('user-disconnected', (username) => {
     console.log(username + ' left the chat');
     gameOverBecausePlayerLeft(username);
 });
 
-socket.on('create-game-page', showGame);
 
+/**
+ * Sockets for game code
+ */
+socket.on('create-game-page', showGamePage);
+socket.on('get-available-space', getAvailableSpace)
 socket.on('load-image-position', outputRandomImagePosition);
