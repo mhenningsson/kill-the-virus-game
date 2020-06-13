@@ -17,18 +17,15 @@ const updateOnlineUsers = (users) => {
     document.querySelector('#online').innerHTML = users.map(user => `<li class="list-item users">${user}</li>`).join('');
 };
 
-// Waiting room
-const updateWaitingRoom = (users) => {
-    if (users.length > 1) {
-        console.log('Yay were more than one!')
+// Showing game if number of users is two
+const showGame = (onlineUsers) => {
+    if (onlineUsers.length === 2) {
+        console.log('Going to game, two players!');
 
         waitingEl.classList.add('hide');
         gamePageEl.classList.remove('hide');
-
-        // loadGame()
-        // socket.emit('game-ready', users)
     } else {
-        console.log('im so lonely');
+        console.log('only one');
         return;
     }
 }
@@ -38,23 +35,25 @@ usernameForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
     username = document.querySelector('#username').value;
+    
     socket.emit('register-user', username, (status) => {
         console.log('Server acknowleged the registration', status);
+        
+        startEl.classList.add('hide');
+        waitingEl.classList.remove('hide');
 
-        updateOnlineUsers(status.onlineUsers);
+        if (status.joinGame) {
+            showGame(status.onlineUsers);
+            updateOnlineUsers(status.onlineUsers)
+        };
 
-        updateWaitingRoom(status.onlineUsers);
     });
-
-    startEl.classList.add('hide');
-    waitingEl.classList.remove('hide');
 });
 
 
 // Sockets
 socket.on('online-users', (users) => {
-    updateOnlineUsers(users);
-    updateWaitingRoom(users);
+    showGame(users);
 });
 
 socket.on('new-user-connected', username  => {
@@ -63,4 +62,6 @@ socket.on('new-user-connected', username  => {
 
 socket.on('user-disconnected', (username) => {
     console.log(username + ' left the chat');
-})
+});
+
+// socket.on('two-players-connected', updateWaitingRoom);
