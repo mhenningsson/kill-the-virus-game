@@ -28,23 +28,24 @@ function handleRegisterUser(username, callback) {
     });
 
     this.broadcast.emit('new-user-connected', username);
+
     this.broadcast.emit('online-users', getOnlineUsers());
 };
 
 // User disconnecting
-// function handleUserDisconnect() {
-//     debug(users[this.id] + 'left the chat');
-//     if (users[this.id]) {
-//         this.broadcast.emit('user-disconnected', users[this.id]);
-//     }
+function handleUserDisconnect() {
+    debug(users[this.id] + 'left the chat');
+    if (users[this.id]) {
+        this.broadcast.emit('user-disconnected', users[this.id]);
+    }
 
-//     delete users[this.id];
-// };
+    delete users[this.id];
+};
 
 module.exports = function(socket) {
     debug('A client connected: ', socket.id);
 
-    // socket.on('disconnect', handleUserDisconnect);
+    socket.on('disconnect', handleUserDisconnect);
 
     socket.on('register-user', handleRegisterUser);
 

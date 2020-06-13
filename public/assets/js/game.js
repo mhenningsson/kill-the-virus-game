@@ -25,9 +25,16 @@ const showGame = (onlineUsers) => {
         waitingEl.classList.add('hide');
         gamePageEl.classList.remove('hide');
     } else {
-        console.log('only one');
+        console.log('No one to play against..');
         return;
     }
+}
+
+// Game over because a player left the game
+const gameOverBecausePlayerLeft = (username) => {
+    gamePageEl.classList.add('hide');
+
+    document.querySelector('#player-disconnected').classList.remove('hide');
 }
 
 // Register new user from startpage
@@ -52,8 +59,17 @@ usernameForm.addEventListener('submit', (e) => {
 
 
 // Sockets
+socket.on('reconnect', () => {
+    if (username) {
+        socket.emit('register-user', username, () => {
+            console.log('The server acknowledged our reconnect.')
+        })
+    }
+})
+
 socket.on('online-users', (users) => {
     showGame(users);
+    updateOnlineUsers(users);
 });
 
 socket.on('new-user-connected', username  => {
@@ -62,6 +78,7 @@ socket.on('new-user-connected', username  => {
 
 socket.on('user-disconnected', (username) => {
     console.log(username + ' left the chat');
+    gameOverBecausePlayerLeft(username);
 });
 
 // socket.on('two-players-connected', updateWaitingRoom);
