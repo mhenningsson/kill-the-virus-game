@@ -3,19 +3,26 @@
  */
 const debug = require('debug')('kill-the-virus-game:socket_controller');
 let users = {};
-const games = {};
 let io = null;
-
-// Create game room
-// function createGame(player1, player2) {
-//     console.log('creating game')
-
-// };
+const score = null;
+const reaction = null;
+const timer = null;
 
 // Get username of online users
 function getOnlineUsers() {
     return Object.values(users);
 };
+
+// Check if two players are online
+function checkUsersOnline() {
+    console.log(Object.keys(users).length);
+
+    if (Object.keys(users).length === 2) {
+        io.emit('create-game-page');
+    } else {
+        return;
+    }
+}
 
 // Handle register a new user
 function handleRegisterUser(username, callback) {
@@ -26,6 +33,8 @@ function handleRegisterUser(username, callback) {
         joinGame: true,
         onlineUsers: getOnlineUsers()
     });
+
+    checkUsersOnline();
 
     this.broadcast.emit('new-user-connected', username);
 
@@ -44,6 +53,7 @@ function handleUserDisconnect() {
 
 module.exports = function(socket) {
     debug('A client connected: ', socket.id);
+    io = this;
 
     socket.on('disconnect', handleUserDisconnect);
 
@@ -52,6 +62,4 @@ module.exports = function(socket) {
     socket.on('new-user-connected', (username) => {
         debug(username + ' connected to game')
     });
-
-    // socket.on('start-game', createGame)
 };

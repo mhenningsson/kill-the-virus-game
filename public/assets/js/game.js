@@ -18,16 +18,9 @@ const updateOnlineUsers = (users) => {
 };
 
 // Showing game if number of users is two
-const showGame = (onlineUsers) => {
-    if (onlineUsers.length === 2) {
-        console.log('Going to game, two players!');
-
-        waitingEl.classList.add('hide');
-        gamePageEl.classList.remove('hide');
-    } else {
-        console.log('No one to play against..');
-        return;
-    }
+const showGame = () => {
+    waitingEl.classList.add('hide');
+    gamePageEl.classList.remove('hide');
 }
 
 // Game over because a player left the game
@@ -50,7 +43,6 @@ usernameForm.addEventListener('submit', (e) => {
         waitingEl.classList.remove('hide');
 
         if (status.joinGame) {
-            showGame(status.onlineUsers);
             updateOnlineUsers(status.onlineUsers)
         };
 
@@ -68,7 +60,6 @@ socket.on('reconnect', () => {
 })
 
 socket.on('online-users', (users) => {
-    showGame(users);
     updateOnlineUsers(users);
 });
 
@@ -81,4 +72,4 @@ socket.on('user-disconnected', (username) => {
     gameOverBecausePlayerLeft(username);
 });
 
-// socket.on('two-players-connected', updateWaitingRoom);
+socket.on('create-game-page', showGame);
