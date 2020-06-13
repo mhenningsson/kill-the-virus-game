@@ -21,7 +21,34 @@ const updateOnlineUsers = (users) => {
 const showGame = () => {
     waitingEl.classList.add('hide');
     gamePageEl.classList.remove('hide');
+
+    loadBoxWidhtAndHeight();
 }
+
+// Loading space for virus to position on
+function loadBoxWidhtAndHeight() {
+    const boxHeight = document.querySelector('#game').clientHeight;
+    const boxWidth = document.querySelector('#game').clientWidth;
+    
+    const y = boxHeight-64;
+    const x = boxWidth-64;
+
+    const availableSpace = {y, x};
+
+    socket.emit('create-random-position-for-virus', availableSpace);
+}
+
+// Randomly position image
+const outputRandomImagePosition = (y, x) => {
+    console.log('Random numbers: ', y, x);
+    
+    document.querySelector('#virus').style.top = y + "px";
+    document.querySelector('#virus').style.left = x + "px";
+
+    document.querySelector('#virus').classList.remove('hide');
+
+    console.log('New image position')
+};
 
 // Game over because a player left the game
 const gameOverBecausePlayerLeft = (username) => {
@@ -73,3 +100,5 @@ socket.on('user-disconnected', (username) => {
 });
 
 socket.on('create-game-page', showGame);
+
+socket.on('load-image-position', outputRandomImagePosition);

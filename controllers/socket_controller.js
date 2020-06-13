@@ -13,8 +13,24 @@ function getOnlineUsers() {
     return Object.values(users);
 };
 
+// Create game
+function createGame() {
+    console.log('creating one game')
+    document.querySelector()
+}
+
+// Create random virus position
+function createVirusPosition(availableSpace) {
+    const y = Math.floor(Math.random() * availableSpace.y);
+    const x = Math.floor(Math.random() * availableSpace.x);
+
+    // const delay = Math.floor(Math.random() * 10000);
+
+    io.emit('load-image-position', y, x);
+}
+
 // Check if two players are online
-function checkUsersOnline() {
+function checkUsersOnline(socket) {
     console.log(Object.keys(users).length);
 
     if (Object.keys(users).length === 2) {
@@ -34,7 +50,7 @@ function handleRegisterUser(username, callback) {
         onlineUsers: getOnlineUsers()
     });
 
-    checkUsersOnline();
+    checkUsersOnline(this);
 
     this.broadcast.emit('new-user-connected', username);
 
@@ -62,4 +78,6 @@ module.exports = function(socket) {
     socket.on('new-user-connected', (username) => {
         debug(username + ' connected to game')
     });
+
+    socket.on('create-random-position-for-virus', createVirusPosition);
 };
