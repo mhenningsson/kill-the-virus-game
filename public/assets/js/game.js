@@ -8,9 +8,19 @@ const socket = io();
 const usernameForm = document.querySelector('#username-form');
 const startEl = document.querySelector('#start');
 const gamePageEl = document.querySelector('#game-page');
+const gameBoard = document.querySelector('#game');
+const gameOverResult = document.querySelector('#game-over-result');
 const waitingEl = document.querySelector('#waiting-room');
+const virusImg = document.querySelector('#virus');
 
 let username = null;
+let timer = null;
+let reactiontime = null;
+let playersInfo = {
+    id: null,
+    reactiontime,
+    clicked: false
+}
 
 // Update online users
 const updateOnlineUsers = (users) => {
@@ -21,15 +31,18 @@ const updateOnlineUsers = (users) => {
 const showGamePage = () => {
     waitingEl.classList.add('hide');
     gamePageEl.classList.remove('hide');
+}
 
-    // getAvailableSpace();
+// Showing game over and final result
+function showGameOver(players, score) {
+    gamePageEl.classList.add('hide');
+    gameOverResult.classList.remove('hide');
 }
 
 // Loading space for virus to position on
 function getAvailableSpace(id) {
-    console.log('getting available space for id: ', id)
-    const boxHeight = document.querySelector('#game').clientHeight;
-    const boxWidth = document.querySelector('#game').clientWidth;
+    const boxHeight = gameBoard.clientHeight;
+    const boxWidth = gameBoard.clientWidth;
     
     const y = boxHeight-64;
     const x = boxWidth-64;
@@ -40,17 +53,16 @@ function getAvailableSpace(id) {
 }
 
 // Randomly position image
-const outputRandomImagePosition = (y, x, delay, user, timer) => {
+const outputRandomImagePosition = (y, x, delay, user) => {
     console.log('Random numbers from user: ', y, x, user);
     
-    document.querySelector('#virus').style.top = y + "px";
-    document.querySelector('#virus').style.left = x + "px";
+    virusImg.style.top = y + "px";
+    virusImg.style.left = x + "px";
 
-    setTimeout(function() {
-        document.querySelector('#virus').classList.remove('hide');
+    setTimeout(() => {
+        virusImg.classList.remove('hide'),
+        timer = Date.now();
     }, delay);
-
-    console.log('New image position with delay: ', delay)
 };
 
 // Game over because a player left the game
@@ -60,14 +72,24 @@ const gameOverBecausePlayerLeft = (username) => {
     document.querySelector('#player-disconnected').classList.remove('hide');
 }
 
+// Updating score result
+const updateScoreResult = (score) => {
+    console.log('Score: ', score)
+}
+
 // Listen to click on game
-document.querySelector('#virus').addEventListener('click', (e) => {
-    console.log('Click!');
+virusImg.addEventListener('click', (e) => {
+    let clickedTime = Date.now();
+    reactiontime = clickedTime - timer;
 
-    document.querySelector('#virus').classList.add('hide');
-    socket.emit('clicked-virus', [socket.id], Date.now());
+    let playersInfo = {
+        id: socket.id,
+        reactiontime,
+    }
+
+    socket.emit('clicked-virus', playersInfo);
+    virusImg.classList.add('hide');
 })
-
 
 // Register new user from startpage
 usernameForm.addEventListener('submit', (e) => {
@@ -117,3 +139,5 @@ socket.on('user-disconnected', (username) => {
 socket.on('create-game-page', showGamePage);
 socket.on('get-available-space', getAvailableSpace)
 socket.on('load-image-position', outputRandomImagePosition);
+socket.on('update-result', updateScoreResult);
+socket.on('game-over', showGameOver);
