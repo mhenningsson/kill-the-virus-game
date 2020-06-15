@@ -43,7 +43,12 @@ const showGamePage = () => {
 }
 
 // Showing game over and final result
-function showGameOver(players, score) {
+function showGameOver(scoreboard) {
+    document.querySelector('#final-result').innerHTML = Object.entries(scoreboard).map(([key, value]) => {
+        console.log(`${key}: ${value}`)
+        return `<li class="list-item users">${key}: ${value}</li>`
+    }).join('');
+
     gamePageEl.classList.add('hide');
     gameOverResult.classList.remove('hide');
 }

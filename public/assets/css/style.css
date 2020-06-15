@@ -83,6 +83,10 @@ div#player-disconnected {
   align-items: center;
 }
 
+#final-result li {
+  list-style: none;
+}
+
 .hide {
   display: none !important;
 }

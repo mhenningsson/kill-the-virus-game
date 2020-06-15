@@ -29,7 +29,7 @@ function startNewGame(socket) {
         socket.emit('get-available-space', socket.id);
         console.log('Played rounds: ', game.playedRounds)
     } else {
-        io.emit('game-over', game.players, game.score);
+        io.emit('game-over', scoreboard);
         game.playedRounds = 0;
     
         console.log("game over");
@@ -123,11 +123,11 @@ function handleRegisterUser(username, callback) {
 
 // User disconnecting
 function handleUserDisconnect() {
-    debug(users[this.id] + 'left the chat');
-
-    if (users[this.id]) {
-        this.broadcast.emit('user-disconnected', users[this.id]);
-    }
+    if (game.playedRounds > 0) {
+        if (users[this.id]) {
+            this.broadcast.emit('user-disconnected', users[this.id]);
+        }
+    } 
 
     delete users[this.id];
 };
