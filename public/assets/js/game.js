@@ -18,13 +18,22 @@ let timer = null;
 let reactiontime = null;
 let playersInfo = {
     id: null,
-    reactiontime,
-    clicked: false
-}
+    reactiontime
+};
+let scoreboard = {};
 
 // Update online users
-const updateOnlineUsers = (users) => {
-    document.querySelector('#online').innerHTML = users.map(user => `<li class="list-item users">${user}</li>`).join('');
+const updateOnlineUsers = (users, score) => {
+    // document.querySelector('#online').innerHTML = users.map(user => `<li class="list-item users">${user}</li>`).join('');
+    console.log('Updating users')
+};
+
+// Update score board
+const updateScoreBoard = (scoreboard) => {
+    document.querySelector('#score-result').innerHTML = Object.entries(scoreboard).map(([key, value]) => {
+        console.log(`${key}: ${value}`)
+        return `<li class="list-item users">${key}: ${value}</li>`
+    }).join('');
 };
 
 // Showing game if number of users is two
@@ -70,11 +79,6 @@ const gameOverBecausePlayerLeft = (username) => {
     gamePageEl.classList.add('hide');
 
     document.querySelector('#player-disconnected').classList.remove('hide');
-}
-
-// Updating score result
-const updateScoreResult = (score) => {
-    console.log('Score: ', score)
 }
 
 // Listen to click on game
@@ -139,5 +143,5 @@ socket.on('user-disconnected', (username) => {
 socket.on('create-game-page', showGamePage);
 socket.on('get-available-space', getAvailableSpace)
 socket.on('load-image-position', outputRandomImagePosition);
-socket.on('update-result', updateScoreResult);
+socket.on('update-score-board', updateScoreBoard);
 socket.on('game-over', showGameOver);

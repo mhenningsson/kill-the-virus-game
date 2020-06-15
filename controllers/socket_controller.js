@@ -12,7 +12,9 @@ let game = {
     playedRounds: 0,
     score: {},
     reaction: {}
-}
+};
+
+let scoreboard = {}; 
 
 // Get username of online users
 function getOnlineUsers() {
@@ -36,6 +38,13 @@ function startNewGame(socket) {
 
 };
 
+function updateScoreBoard(id) {
+    scoreboard[game.players[id]] = game.score[id];
+    console.log('updating result', scoreboard);
+
+    io.emit('update-score-board', scoreboard);
+}
+
 // Create random virus position
 function createVirusPosition(availableSpace) {
     const y = Math.floor(Math.random() * availableSpace.y);
@@ -48,8 +57,6 @@ function createVirusPosition(availableSpace) {
 
 // Get what time a player clicked the virus
 function getClickTime(playerInfo) {
-    console.log('Player information: ', playerInfo);
-
     game.reaction[playerInfo.id] = playerInfo.reactiontime;
     timesclicked++;
     compareReactionTimes(this);
@@ -59,9 +66,11 @@ function getClickTime(playerInfo) {
 function compareReactionTimes(socket) {
     if (timesclicked === 2) {
         if (game.reaction[socket.id] < otherPlayer.reaction) {
-            game.score[socket.id]++
+            game.score[socket.id]++;
+            updateScoreBoard(socket.id);
         } else if (game.reaction[socket.id] > otherPlayer.reaction) {
-            game.score[otherPlayer.id]++
+            game.score[otherPlayer.id]++;
+            updateScoreBoard(otherPlayer.id);
         }
     } else {
         otherPlayer = {
@@ -74,25 +83,22 @@ function compareReactionTimes(socket) {
     timesclicked = 0;
     game.playedRounds++;
 
-    io.emit('update-result', game.score);
     startNewGame(socket);
-}
-
-
+};
 
 // Check if two players are online
 function checkUsersOnline(socket) {
     if (Object.keys(users).length === 2) {
         game.score[socket.id] = 0;
+        scoreboard[game.players[socket.id]] = 0;
 
+        io.emit('update-score-board', scoreboard);
         io.emit('create-game-page');
-        
-        console.log(users[socket.id] + ' started the game');
-        console.log('players of the game: ', game.players);
 
         startNewGame(socket);
     } else {
         game.score[socket.id] = 0;
+        scoreboard[game.players[socket.id]] = 0;
         return;
     }
 }
