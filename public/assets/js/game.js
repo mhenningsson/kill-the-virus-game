@@ -141,9 +141,6 @@ playAgainBtn.addEventListener('click', (e) => {
 
     gameOverResultEl.classList.add('hide');
     startEl.classList.remove('hide');
-
-    console.log('Player wants to play again"');
-    socket.emit('play-again');
 })
 
 // Restart the game when other user disconnected
@@ -152,9 +149,6 @@ playAgainDisconnectedBtn.addEventListener('click', (e) => {
 
     playerDiconnectedEl.classList.add('hide');
     startEl.classList.remove('hide');
-
-    console.log('Player wants to play again"');
-    socket.emit('play-again')
 })
 
 // Too many players in the room

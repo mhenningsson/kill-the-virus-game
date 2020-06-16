@@ -38,7 +38,7 @@ function startNewGame(socket) {
         socket.emit('get-available-space', socket.id);
     } else {
         io.emit('game-over', scoreboard, getWinner());
-        game.playedRounds = 0;
+        resettingGame();
         return;
     }
 
@@ -128,12 +128,14 @@ function handleRegisterUser(username, callback) {
 };
 
 // Reset saved info about users and game
-const resettingGame = (id) => {
-    delete users[id];
-    delete game.players[id];
-    delete game.score[id];
-    delete game.reaction[id];
-    game.playedRounds = 0;
+const resettingGame = () => {
+    users = {};
+    game = {
+        players: {},
+        playedRounds: 0,
+        score: {},
+        reaction: {}
+    }
     scoreboard = {};
     
     debug('Disconnected: ', game);
@@ -144,11 +146,11 @@ const resettingGame = (id) => {
 function handleUserDisconnect() {
     debug(users[this.id] + 'left the chat');
 
-    if (game.playedRounds > 0) {
+    if (game.players[this.id]) {
         if (users[this.id]) {
             this.broadcast.emit('user-disconnected', users[this.id]);
         }
-        resettingGame(this.id)
+        resettingGame();
     }
     delete users[this.id];
 };
@@ -172,8 +174,4 @@ module.exports = function(socket) {
 
     socket.on('clicked-virus', getClickTime);
 
-    socket.on('play-again', () => {
-        debug('Playing again');
-        resettingGame(socket.id);
-    });
 };
