@@ -1,7 +1,6 @@
 /**
  * Game JavaScript
  */
-
 const socket = io();
 
 // HTML elements
@@ -12,7 +11,8 @@ const gameBoard = document.querySelector('#game');
 const gameOverResultEl = document.querySelector('#game-over-result');
 const waitingEl = document.querySelector('#waiting-room');
 const virusImg = document.querySelector('#virus');
-const playAgainBtn = document.querySelector('#playagain');
+const playAgainBtn = document.querySelector('#play-again');
+const playAgainDisconnectedBtn = document.querySelector('#play-again-disconnected');
 const playerDiconnectedEl = document.querySelector('#player-disconnected');
 
 let username = null;
@@ -25,7 +25,7 @@ let playersInfo = {
 let scoreboard = {};
 
 // Update online users
-const updateOnlineUsers = (users, score) => {
+const updateOnlineUsers = (users) => {
     // document.querySelector('#online').innerHTML = users.map(user => `<li class="list-item users">${user}</li>`).join('');
     console.log('Updating users')
 };
@@ -96,7 +96,7 @@ const outputRandomImagePosition = (y, x, delay, user) => {
 };
 
 // Game over because a player left the game
-const gameOverBecausePlayerLeft = () => {
+const gameOverPlayerDisconnected = () => {
     gamePageEl.classList.add('hide');
 
     document.querySelector('#player-disconnected').classList.remove('hide');
@@ -135,16 +135,38 @@ usernameForm.addEventListener('submit', (e) => {
     });
 });
 
+// Restart the game when game has been played
+playAgainBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    gameOverResultEl.classList.add('hide');
+    startEl.classList.remove('hide');
+
+    console.log('Player wants to play again"');
+    socket.emit('play-again');
+})
+
+// Restart the game when other user disconnected
+playAgainDisconnectedBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    playerDiconnectedEl.classList.add('hide');
+    startEl.classList.remove('hide');
+
+    console.log('Player wants to play again"');
+    socket.emit('play-again')
+})
+
+// Too many players in the room
+function tooManyPlayers() {
+    startEl.classList.add('hide');
+    waitingEl.classList.add('hide');
+    document.querySelector('#too-many-players').classList.remove('hide');
+}
+
 /**
  * Sockets for user registration and diconnection
  */
-socket.on('reconnect', () => {
-    if (username) {
-        socket.emit('register-user', username, () => {
-            console.log('The server acknowledged our reconnect.')
-        })
-    }
-})
 socket.on('online-users', (users) => {
     updateOnlineUsers(users);
 });
@@ -153,15 +175,21 @@ socket.on('new-user-connected', username  => {
 });
 socket.on('user-disconnected', (username) => {
     console.log(username + ' left the chat');
-    gameOverBecausePlayerLeft(username);
+    gameOverPlayerDisconnected(username);
 });
+
+socket.on('too-many-players', tooManyPlayers);
 
 
 /**
  * Sockets for game code
  */
 socket.on('create-game-page', showGamePage);
-socket.on('get-available-space', getAvailableSpace)
+
+socket.on('get-available-space', getAvailableSpace);
+
 socket.on('load-image-position', outputRandomImagePosition);
+
 socket.on('update-score-board', updateScoreBoard);
+
 socket.on('game-over', showGameOver);

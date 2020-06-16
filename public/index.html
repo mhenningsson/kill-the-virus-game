@@ -31,6 +31,11 @@
 			<p>Waiting for another player to join the game...</p>
 		</div>
 
+		<!-- Too many players -->
+		<div id="too-many-players" class="hide">
+			<p>Sorry, there's too many players in the game. Try again later!</p>
+		</div>
+
 		<!-- Game page -->
 		<div id="game-page" class="hide">
 			
@@ -52,20 +57,20 @@
 
 		<!-- Game over and final result-->
 		<div id="game-over-result" class="hide">
-			<h1>Winner of the game is:</h1>
+			<h1>Winner is:</h1>
 			<h2 id="winner"></h2>
 
 			<h3>The final score: </h3>
 			<ul id="final-result">
 			</ul>
-			<button type="submit" class="btn btn-secondary playagain">Play again</button>
+			<button id="play-again" type="submit" class="btn btn-secondary">Play again</button>
 		</div>
 
 		<!-- Game over if player disconnected -->
 		<div id="player-disconnected" class="hide">
 			<h2>Game over.</h2>
 			<p>The other player left the game. Want to play again?</p>
-			<button type="submit" class="btn btn-secondary playagain">Play again</button>
+			<button id="play-again-disconnected" type="submit" class="btn btn-secondary">Play again</button>
 		</div>	
 
 	</div> <!-- end "app" div-->

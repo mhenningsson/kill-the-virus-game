@@ -3,6 +3,7 @@
  */
 const debug = require('debug')('kill-the-virus-game:socket_controller');
 let users = {};
+
 let io = null;
 let otherPlayer = {};
 
@@ -92,6 +93,7 @@ function compareReactionTimes(socket) {
 // Check if two players are online
 function checkUsersOnline(socket) {
     if (Object.keys(users).length === 2) {
+        game.players[socket.id] = users[socket.id];
         game.score[socket.id] = 0;
         scoreboard[game.players[socket.id]] = 0;
 
@@ -99,19 +101,20 @@ function checkUsersOnline(socket) {
         io.emit('create-game-page');
 
         startNewGame(socket);
-    } else {
+    } else if (Object.keys(users).length < 2) {
+        game.players[socket.id] = users[socket.id];
         game.score[socket.id] = 0;
         scoreboard[game.players[socket.id]] = 0;
         return;
+    } else if (Object.keys(users).length > 2) {
+        delete users[socket.id];
+        socket.emit('too-many-players');
     }
 }
 
 // Handle register a new user
 function handleRegisterUser(username, callback) {
-    debug('User connected to game: ', username);
-
     users[this.id] = username;
-    game.players[this.id] = username;
 
     callback({
         joinGame: true,
@@ -124,6 +127,19 @@ function handleRegisterUser(username, callback) {
     this.broadcast.emit('online-users', getOnlineUsers());
 };
 
+// Reset saved info about users and game
+const resettingGame = (id) => {
+    delete users[id];
+    delete game.players[id];
+    delete game.score[id];
+    delete game.reaction[id];
+    game.playedRounds = 0;
+    scoreboard = {};
+    
+    debug('Disconnected: ', game);
+    debug('Scoreboard when disconnect: ', scoreboard);
+}
+
 // User disconnecting
 function handleUserDisconnect() {
     debug(users[this.id] + 'left the chat');
@@ -132,15 +148,11 @@ function handleUserDisconnect() {
         if (users[this.id]) {
             this.broadcast.emit('user-disconnected', users[this.id]);
         }
-    
-        delete users[this.id];
-        delete game.players[this.id];
-        delete game.score[this.id];
-        delete game.reaction[this.id];
-        scoreboard = {};
+        resettingGame(this.id)
     }
     delete users[this.id];
 };
+
 
 module.exports = function(socket) {
     debug('A client connected: ', socket.id);
@@ -159,4 +171,9 @@ module.exports = function(socket) {
     socket.on('create-random-position-for-virus', createVirusPosition);
 
     socket.on('clicked-virus', getClickTime);
+
+    socket.on('play-again', () => {
+        debug('Playing again');
+        resettingGame(socket.id);
+    });
 };
