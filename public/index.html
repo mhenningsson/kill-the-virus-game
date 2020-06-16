@@ -45,26 +45,28 @@
 				<h2>Players:</h2>
 				<ul id="score-result">
 				</ul>
+				<p id="played-rounds"></p>
 			</div>
 
 		</div>
 
 		<!-- Game over and final result-->
 		<div id="game-over-result" class="hide">
-			<h2>Game over.</h2>
-			<p>The final result is: </p>
+			<h1>Winner of the game is:</h1>
+			<h2 id="winner"></h2>
+
+			<h3>The final score: </h3>
 			<ul id="final-result">
 			</ul>
-			<button id="playagain" class="btn btn-secondary">Play again</button>
+			<button type="submit" class="btn btn-secondary playagain">Play again</button>
 		</div>
 
 		<!-- Game over if player disconnected -->
 		<div id="player-disconnected" class="hide">
 			<h2>Game over.</h2>
 			<p>The other player left the game. Want to play again?</p>
-
-			<button id="playagain" class="btn btn-secondary">Play again</button>
-		</div>
+			<button type="submit" class="btn btn-secondary playagain">Play again</button>
+		</div>	
 
 	</div> <!-- end "app" div-->
 

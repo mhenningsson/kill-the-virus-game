@@ -9,9 +9,11 @@ const usernameForm = document.querySelector('#username-form');
 const startEl = document.querySelector('#start');
 const gamePageEl = document.querySelector('#game-page');
 const gameBoard = document.querySelector('#game');
-const gameOverResult = document.querySelector('#game-over-result');
+const gameOverResultEl = document.querySelector('#game-over-result');
 const waitingEl = document.querySelector('#waiting-room');
 const virusImg = document.querySelector('#virus');
+const playAgainBtn = document.querySelector('#playagain');
+const playerDiconnectedEl = document.querySelector('#player-disconnected');
 
 let username = null;
 let timer = null;
@@ -29,11 +31,13 @@ const updateOnlineUsers = (users, score) => {
 };
 
 // Update score board
-const updateScoreBoard = (scoreboard) => {
+const updateScoreBoard = (scoreboard, rounds) => {
     document.querySelector('#score-result').innerHTML = Object.entries(scoreboard).map(([key, value]) => {
         console.log(`${key}: ${value}`)
         return `<li class="list-item users">${key}: ${value}</li>`
     }).join('');
+
+    document.querySelector('#played-rounds').innerText = `Played rounds: ${rounds} of 10`;
 };
 
 // Showing game if number of users is two
@@ -43,14 +47,26 @@ const showGamePage = () => {
 }
 
 // Showing game over and final result
-function showGameOver(scoreboard) {
+function showGameOver(scoreboard, winner) {
+    // Show final score between players
     document.querySelector('#final-result').innerHTML = Object.entries(scoreboard).map(([key, value]) => {
         console.log(`${key}: ${value}`)
         return `<li class="list-item users">${key}: ${value}</li>`
     }).join('');
 
+    // Show winner or if it's a tie
+    console.log('Winner: ', winner, winner.length);
+    if (winner.length > 1) {
+        document.querySelector('#winner').innerText = winner.map(player => {
+            return `${player}`
+        }).join(' & ');
+    } else {
+        document.querySelector('#winner').innerText = `${winner[0]}`
+    }
+
+    // Show game over page
     gamePageEl.classList.add('hide');
-    gameOverResult.classList.remove('hide');
+    gameOverResultEl.classList.remove('hide');
 }
 
 // Loading space for virus to position on
@@ -80,7 +96,7 @@ const outputRandomImagePosition = (y, x, delay, user) => {
 };
 
 // Game over because a player left the game
-const gameOverBecausePlayerLeft = (username) => {
+const gameOverBecausePlayerLeft = () => {
     gamePageEl.classList.add('hide');
 
     document.querySelector('#player-disconnected').classList.remove('hide');
@@ -118,7 +134,6 @@ usernameForm.addEventListener('submit', (e) => {
 
     });
 });
-
 
 /**
  * Sockets for user registration and diconnection

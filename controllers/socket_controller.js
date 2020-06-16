@@ -21,28 +21,32 @@ function getOnlineUsers() {
     return Object.values(users);
 };
 
+// Get winner of the game
+function getWinner() {
+    return Object.entries(scoreboard).reduce((player, [key, value]) => {
+        if (value >= 5) {
+            player.push(key)
+        }
+        return player;
+    }, []);
+;}
+
 // Start new game
 function startNewGame(socket) {
-    console.log('creating one game from user: ', users[socket.id]);
-        
     if (game.playedRounds < 10) {
         socket.emit('get-available-space', socket.id);
-        console.log('Played rounds: ', game.playedRounds)
     } else {
-        io.emit('game-over', scoreboard);
+        io.emit('game-over', scoreboard, getWinner());
         game.playedRounds = 0;
-    
-        console.log("game over");
         return;
     }
 
 };
 
+// Updating scoreboard for front end
 function updateScoreBoard(id) {
     scoreboard[game.players[id]] = game.score[id];
-    console.log('updating result', scoreboard);
-
-    io.emit('update-score-board', scoreboard);
+    io.emit('update-score-board', scoreboard, game.playedRounds);
 }
 
 // Create random virus position
@@ -50,7 +54,7 @@ function createVirusPosition(availableSpace) {
     const y = Math.floor(Math.random() * availableSpace.y);
     const x = Math.floor(Math.random() * availableSpace.x);
 
-    const delay = Math.floor(Math.random() * 10000);
+    const delay = Math.floor(Math.random() * 7000);
 
     io.emit('load-image-position', y, x, delay, users[this.id]);
 };
@@ -67,9 +71,11 @@ function compareReactionTimes(socket) {
     if (timesclicked === 2) {
         if (game.reaction[socket.id] < otherPlayer.reaction) {
             game.score[socket.id]++;
+            game.playedRounds++;
             updateScoreBoard(socket.id);
         } else if (game.reaction[socket.id] > otherPlayer.reaction) {
             game.score[otherPlayer.id]++;
+            game.playedRounds++;
             updateScoreBoard(otherPlayer.id);
         }
     } else {
@@ -79,10 +85,7 @@ function compareReactionTimes(socket) {
         }
         return;
     }
-    debug('Score: ', game.score);
     timesclicked = 0;
-    game.playedRounds++;
-
     startNewGame(socket);
 };
 
@@ -92,7 +95,7 @@ function checkUsersOnline(socket) {
         game.score[socket.id] = 0;
         scoreboard[game.players[socket.id]] = 0;
 
-        io.emit('update-score-board', scoreboard);
+        io.emit('update-score-board', scoreboard, game.playedRounds);
         io.emit('create-game-page');
 
         startNewGame(socket);
@@ -123,15 +126,21 @@ function handleRegisterUser(username, callback) {
 
 // User disconnecting
 function handleUserDisconnect() {
+    debug(users[this.id] + 'left the chat');
+
     if (game.playedRounds > 0) {
         if (users[this.id]) {
             this.broadcast.emit('user-disconnected', users[this.id]);
         }
-    } 
-
+    
+        delete users[this.id];
+        delete game.players[this.id];
+        delete game.score[this.id];
+        delete game.reaction[this.id];
+        scoreboard = {};
+    }
     delete users[this.id];
 };
-
 
 module.exports = function(socket) {
     debug('A client connected: ', socket.id);
