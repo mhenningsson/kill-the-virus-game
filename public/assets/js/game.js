@@ -59,6 +59,7 @@ function showGameOver(scoreboard, winner) {
     // Show game over page
     gamePageEl.classList.add('hide');
     gameOverResultEl.classList.remove('hide');
+    document.querySelector('#too-many-players').classList.add('hide');
 }
 
 // Loading space for virus to position on
@@ -89,6 +90,7 @@ const outputRandomImagePosition = (y, x, delay, user) => {
 const gameOverPlayerDisconnected = () => {
     gamePageEl.classList.add('hide');
     playerDiconnectedEl.classList.remove('hide');
+    document.querySelector('#too-many-players').classList.add('hide');
 }
 
 // Listen to click on game

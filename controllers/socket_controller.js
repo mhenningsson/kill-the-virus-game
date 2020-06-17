@@ -141,8 +141,13 @@ const resettingGame = () => {
 
 // User disconnecting
 function handleUserDisconnect() {
-    this.broadcast.emit('user-disconnected', users[this.id]);
-    resettingGame();
+    if (game.players[this.id]) {
+        if (users[this.id]) {
+            this.broadcast.emit('user-disconnected', users[this.id]);
+        }
+        resettingGame();
+    }
+    delete users[this.id];
 };
 
 
@@ -162,5 +167,4 @@ module.exports = function(socket) {
     socket.on('create-random-position-for-virus', createVirusPosition);
 
     socket.on('clicked-virus', getClickTime);
-
 };
