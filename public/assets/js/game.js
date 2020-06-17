@@ -24,16 +24,9 @@ let playersInfo = {
 };
 let scoreboard = {};
 
-// Update online users
-const updateOnlineUsers = (users) => {
-    // document.querySelector('#online').innerHTML = users.map(user => `<li class="list-item users">${user}</li>`).join('');
-    console.log('Updating users')
-};
-
 // Update score board
 const updateScoreBoard = (scoreboard, rounds) => {
     document.querySelector('#score-result').innerHTML = Object.entries(scoreboard).map(([key, value]) => {
-        console.log(`${key}: ${value}`)
         return `<li class="list-item players">${key}: ${value}</li>`
     }).join('');
 
@@ -50,7 +43,6 @@ const showGamePage = () => {
 function showGameOver(scoreboard, winner) {
     // Show final score between players
     document.querySelector('#final-result').innerHTML = Object.entries(scoreboard).map(([key, value]) => {
-        console.log(`${key}: ${value}`)
         return `<li class="list-item users">${key}: ${value}</li>`
     }).join('');
 
@@ -84,8 +76,6 @@ function getAvailableSpace(id) {
 
 // Randomly position image
 const outputRandomImagePosition = (y, x, delay, user) => {
-    console.log('Random numbers from user: ', y, x, user);
-    
     virusImg.style.top = y + "px";
     virusImg.style.left = x + "px";
 
@@ -98,8 +88,7 @@ const outputRandomImagePosition = (y, x, delay, user) => {
 // Game over because a player left the game
 const gameOverPlayerDisconnected = () => {
     gamePageEl.classList.add('hide');
-
-    document.querySelector('#player-disconnected').classList.remove('hide');
+    playerDiconnectedEl.classList.remove('hide');
 }
 
 // Listen to click on game
@@ -123,8 +112,6 @@ usernameForm.addEventListener('submit', (e) => {
     username = document.querySelector('#username').value;
     
     socket.emit('register-user', username, (status) => {
-        console.log('Server acknowleged the registration', status);
-        
         startEl.classList.add('hide');
         waitingEl.classList.remove('hide');
 
@@ -162,13 +149,12 @@ function tooManyPlayers() {
  * Sockets for user registration and diconnection
  */
 socket.on('online-users', (users) => {
-    updateOnlineUsers(users);
+    // updateOnlineUsers(users);
 });
 socket.on('new-user-connected', username  => {
     console.log(username + 'connected to the chat');
 });
 socket.on('user-disconnected', (username) => {
-    console.log(username + ' left the chat');
     gameOverPlayerDisconnected(username);
 });
 

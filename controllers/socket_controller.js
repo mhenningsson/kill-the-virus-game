@@ -137,27 +137,16 @@ const resettingGame = () => {
         reaction: {}
     }
     scoreboard = {};
-    
-    debug('Disconnected: ', game);
-    debug('Scoreboard when disconnect: ', scoreboard);
 }
 
 // User disconnecting
 function handleUserDisconnect() {
-    debug(users[this.id] + 'left the chat');
-
-    if (game.players[this.id]) {
-        if (users[this.id]) {
-            this.broadcast.emit('user-disconnected', users[this.id]);
-        }
-        resettingGame();
-    }
-    delete users[this.id];
+    this.broadcast.emit('user-disconnected', users[this.id]);
+    resettingGame();
 };
 
 
 module.exports = function(socket) {
-    debug('A client connected: ', socket.id);
     io = this;
 
     // Sockets for user registration and disconnection
