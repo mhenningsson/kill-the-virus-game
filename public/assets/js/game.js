@@ -14,6 +14,7 @@ const virusImg = document.querySelector('#virus');
 const playAgainBtn = document.querySelector('#play-again');
 const playAgainDisconnectedBtn = document.querySelector('#play-again-disconnected');
 const playerDiconnectedEl = document.querySelector('#player-disconnected');
+const tooManyPlayersEl = document.querySelector('#too-many-players');
 
 let username = null;
 let timer = null;
@@ -28,7 +29,7 @@ let scoreboard = {};
 const gameOverPlayerDisconnected = () => {
     gamePageEl.classList.add('hide');
     playerDiconnectedEl.classList.remove('hide');
-    document.querySelector('#too-many-players').classList.add('hide');
+    tooManyPlayersEl.classList.add('hide');
 };
 
 // Loading space for virus to position on
@@ -75,20 +76,21 @@ function showGameOver(scoreboard, winner) {
     // Show game over page
     gamePageEl.classList.add('hide');
     gameOverResultEl.classList.remove('hide');
-    document.querySelector('#too-many-players').classList.add('hide');
+    tooManyPlayersEl.classList.add('hide');
 };
 
 // Showing game if number of users is two
 const showGamePage = () => {
     waitingEl.classList.add('hide');
     gamePageEl.classList.remove('hide');
+    tooManyPlayersEl.classList.add('hide');
 };
 
 // Too many players in the room
 function tooManyPlayers() {
     startEl.classList.add('hide');
     waitingEl.classList.add('hide');
-    document.querySelector('#too-many-players').classList.remove('hide');
+    tooManyPlayersEl.classList.remove('hide');
 };
 
 // Update score board
