@@ -5,6 +5,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Kill The Virus</title>
 
+		<!-- Google fonts-->
+		<link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Permanent+Marker&display=swap" rel="stylesheet"> 
+
 		<!-- Bootstrap -->
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
@@ -15,13 +18,13 @@
 	<div id="app" class="container-fluid">
 
 		<!-- Start page, adding username -->
-		<div id="start">
+		<div id="start" class="">
 			<h1>Are you ready to kill the virus?</h1>
 
 			<form id="username-form">
 				<div class="form-group form-group-lg">
 					<input type="text" id="username" class="form-control form-control-lg" aria-label="input field for username" placeholder="Username" required>
-					<button type="submit" id="createUser" class="btn btn-light btn-lg">Play Game</button>
+					<button type="submit" id="createUser" class="btn btn-light btn-lg">PLAY</button>
 				</div>
 			</form>
 		</div> <!-- end "start" div -->
@@ -46,31 +49,33 @@
 				</div>
 			</div>
 
-			<div id="users-board">
-				<h2>Players:</h2>
-				<ul id="score-result">
-				</ul>
+			<div id="players-board">
+				<div>
+					<h1>Players</h1>
+					<ul id="score-result">
+					</ul>
+				</div>
 				<p id="played-rounds"></p>
 			</div>
 
 		</div>
 
 		<!-- Game over and final result-->
-		<div id="game-over-result" class="hide">
-			<h1>Winner is:</h1>
+		<div id="game-over-result" class="game-over-box hide">
+			<h1>Winner</h1>
 			<h2 id="winner"></h2>
 
-			<h3>The final score: </h3>
+			<h3>The final score</h3>
 			<ul id="final-result">
 			</ul>
-			<button id="play-again" type="submit" class="btn btn-secondary">Play again</button>
+			<button id="play-again" type="submit" class="btn btn-light btn-lg">Play again</button>
 		</div>
 
 		<!-- Game over if player disconnected -->
-		<div id="player-disconnected" class="hide">
-			<h2>Game over.</h2>
+		<div id="player-disconnected" class="game-over-box hide">
+			<h1>Game over.</h1>
 			<p>The other player left the game. Want to play again?</p>
-			<button id="play-again-disconnected" type="submit" class="btn btn-secondary">Play again</button>
+			<button id="play-again-disconnected" type="submit" class="btn btn-light btn-lg">Play again</button>
 		</div>	
 
 	</div> <!-- end "app" div-->

@@ -34,10 +34,10 @@ const updateOnlineUsers = (users) => {
 const updateScoreBoard = (scoreboard, rounds) => {
     document.querySelector('#score-result').innerHTML = Object.entries(scoreboard).map(([key, value]) => {
         console.log(`${key}: ${value}`)
-        return `<li class="list-item users">${key}: ${value}</li>`
+        return `<li class="list-item players">${key}: ${value}</li>`
     }).join('');
 
-    document.querySelector('#played-rounds').innerText = `Played rounds: ${rounds} of 10`;
+    document.querySelector('#played-rounds').innerText = `Rounds: ${rounds} of 10`;
 };
 
 // Showing game if number of users is two

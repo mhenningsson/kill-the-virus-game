@@ -5,8 +5,21 @@
 }
 
 body {
-  background-color: cadetblue;
-  color: whitesmoke;
+  background-image: url('../images/background1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-color: #5E6AFE;
+  color: white;
+  font-family: 'Architects Daughter', cursive;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Permanent Marker', cursive;
+}
+
+
+p {
+  font-size: 1.5em;
 }
 
 #app {
@@ -17,7 +30,10 @@ body {
 }
 
 #start {
-  background-color: rgba(0, 78, 78, 0.5);
+  background-color: rgb(58, 74, 214);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border: 1px solid rgb(48, 62, 180);
+  border-radius: 0.3em;
   padding: 2em 3em;
 }
 
@@ -25,6 +41,16 @@ body {
   font-size: 2em;
   margin-bottom: 1.5em;
   text-transform: uppercase;
+}
+
+button.btn.btn-light {
+  background-color: white;
+  color: rgb(48, 62, 180);
+  font-weight: bold;
+}
+
+button.btn.btn-light:hover {
+  background-color: rgb(205, 210, 253);
 }
 
 #username-form div.form-group {
@@ -42,7 +68,10 @@ body {
   display: flex;
   width: 90vw;
   
-  background-color: rgba(0, 78, 78, 0.5);
+  background-color: rgba(58, 74, 214, 0.8);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border: 1px solid rgb(48, 62, 180);
+  border-radius: 0.3em;
   padding: 2.7em 4em;
 }
 
@@ -53,8 +82,9 @@ body {
 }
 
 #game {
-background-color: rgba(0, 78, 78, 0.7); 
-border: 1px solid whitesmoke;
+background-color: rgba(1, 2, 5, 0.5);
+border: 1px solid #b8bffc;
+border-radius: 0.25em;
 
 margin: 1em 2.5em 1em 0;
 min-width: 90%;
@@ -67,25 +97,75 @@ min-height: 60vh;
   width: 4em;
 }
 
-#users-board {
+#players-board {
   flex-basis: 20%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   border-left: 1px solid whitesmoke;
   padding: 1em;
 }
 
-#users-board li.users {
-  list-style: none;
+#players-board ul {
+  padding: 1em 0;
 }
 
-div#player-disconnected {
+#players-board li.players {
+  font-size: 1.5em;
+  list-style: none;
+  background-color: rgba(1, 2, 5, 0.5);
+  border: 1px solid #b8bffc;
+  border-radius: 0.15em;
+  text-align: center;
+  margin-bottom: 0.25em;
+}
+
+div.game-over-box {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  background-color: rgb(58, 74, 214, 0.4);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border: 1px solid rgb(56, 68, 179, 0.4);
+  border-radius: 0.25em;
+  padding: 3em;
+}
+
+#game-over-result h1 {
+  font-size: 1.75em;
+  font-weight: normal;
+}
+
+#winner {
+  background-color: rgba(1, 2, 5, 0.5);
+  font-size: 2.25em;
+  text-transform: uppercase;
+  border: 1px solid #b8bffc;
+  border-radius: 0.15em;
+  padding: 0.75em 1.5em;
+  margin: 0.75em 1em;
+}
+
+#game-over-result h3 {
+  font-size: 1.5em;
+  font-weight: normal;
+  margin-top: 0.75em;
+}
+
+#final-result {
+  padding: 0.72em 1em;
 }
 
 #final-result li {
   list-style: none;
+  font-size: 1.25em;
 }
+
+div#player-disconnected p {
+ margin-bottom: 1.5em;
+}
+
 
 .hide {
   display: none !important;
