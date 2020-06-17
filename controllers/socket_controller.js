@@ -2,11 +2,10 @@
  * Socket Controller
  */
 const debug = require('debug')('kill-the-virus-game:socket_controller');
-let users = {};
-
 let io = null;
-let otherPlayer = {};
 
+let users = {};
+let otherPlayer = {};
 let timesclicked = 0;
 let game = {
     players: {},
@@ -14,57 +13,28 @@ let game = {
     score: {},
     reaction: {}
 };
-
 let scoreboard = {}; 
 
-// Get username of online users
-function getOnlineUsers() {
-    return Object.values(users);
-};
+// Check if two players are online
+function checkUsersOnline(socket) {
+    if (Object.keys(users).length === 2) {
+        game.players[socket.id] = users[socket.id];
+        game.score[socket.id] = 0;
+        scoreboard[game.players[socket.id]] = 0;
 
-// Get winner of the game
-function getWinner() {
-    return Object.entries(scoreboard).reduce((player, [key, value]) => {
-        if (value >= 5) {
-            player.push(key)
-        }
-        return player;
-    }, []);
-;}
+        io.emit('update-score-board', scoreboard, game.playedRounds);
+        io.emit('create-game-page');
 
-// Start new game
-function startNewGame(socket) {
-    if (game.playedRounds < 10) {
-        socket.emit('get-available-space', socket.id);
-    } else {
-        io.emit('game-over', scoreboard, getWinner());
-        resettingGame();
+        startNewGame(socket);
+    } else if (Object.keys(users).length < 2) {
+        game.players[socket.id] = users[socket.id];
+        game.score[socket.id] = 0;
+        scoreboard[game.players[socket.id]] = 0;
         return;
+    } else if (Object.keys(users).length > 2) {
+        delete users[socket.id];
+        socket.emit('too-many-players');
     }
-
-};
-
-// Updating scoreboard for front end
-function updateScoreBoard(id) {
-    scoreboard[game.players[id]] = game.score[id];
-    io.emit('update-score-board', scoreboard, game.playedRounds);
-}
-
-// Create random virus position
-function createVirusPosition(availableSpace) {
-    const y = Math.floor(Math.random() * availableSpace.y);
-    const x = Math.floor(Math.random() * availableSpace.x);
-
-    const delay = Math.floor(Math.random() * 7000);
-
-    io.emit('load-image-position', y, x, delay, users[this.id]);
-};
-
-// Get what time a player clicked the virus
-function getClickTime(playerInfo) {
-    game.reaction[playerInfo.id] = playerInfo.reactiontime;
-    timesclicked++;
-    compareReactionTimes(this);
 };
 
 // Comparing reactiontime and updating score
@@ -90,27 +60,37 @@ function compareReactionTimes(socket) {
     startNewGame(socket);
 };
 
-// Check if two players are online
-function checkUsersOnline(socket) {
-    if (Object.keys(users).length === 2) {
-        game.players[socket.id] = users[socket.id];
-        game.score[socket.id] = 0;
-        scoreboard[game.players[socket.id]] = 0;
+// Create random virus position
+function createVirusPosition(availableSpace) {
+    const y = Math.floor(Math.random() * availableSpace.y);
+    const x = Math.floor(Math.random() * availableSpace.x);
 
-        io.emit('update-score-board', scoreboard, game.playedRounds);
-        io.emit('create-game-page');
+    const delay = Math.floor(Math.random() * 7000);
 
-        startNewGame(socket);
-    } else if (Object.keys(users).length < 2) {
-        game.players[socket.id] = users[socket.id];
-        game.score[socket.id] = 0;
-        scoreboard[game.players[socket.id]] = 0;
-        return;
-    } else if (Object.keys(users).length > 2) {
-        delete users[socket.id];
-        socket.emit('too-many-players');
-    }
-}
+    io.emit('load-image-position', y, x, delay, users[this.id]);
+};
+
+// Get what time a player clicked the virus
+function getClickTime(playerInfo) {
+    game.reaction[playerInfo.id] = playerInfo.reactiontime;
+    timesclicked++;
+    compareReactionTimes(this);
+};
+
+// Get username of online users
+function getOnlineUsers() {
+    return Object.values(users);
+};
+
+// Get winner of the game
+function getWinner() {
+    return Object.entries(scoreboard).reduce((player, [key, value]) => {
+        if (value >= 5) {
+            player.push(key)
+        }
+        return player;
+    }, []);
+;}
 
 // Handle register a new user
 function handleRegisterUser(username, callback) {
@@ -127,6 +107,17 @@ function handleRegisterUser(username, callback) {
     this.broadcast.emit('online-users', getOnlineUsers());
 };
 
+// User disconnecting
+function handleUserDisconnect() {
+    if (game.players[this.id]) {
+        if (users[this.id]) {
+            this.broadcast.emit('user-disconnected', users[this.id]);
+        }
+        resettingGame();
+    }
+    delete users[this.id];
+};
+
 // Reset saved info about users and game
 const resettingGame = () => {
     users = {};
@@ -137,17 +128,24 @@ const resettingGame = () => {
         reaction: {}
     }
     scoreboard = {};
-}
+};
 
-// User disconnecting
-function handleUserDisconnect() {
-    if (game.players[this.id]) {
-        if (users[this.id]) {
-            this.broadcast.emit('user-disconnected', users[this.id]);
-        }
+// Start new game
+function startNewGame(socket) {
+    if (game.playedRounds < 10) {
+        socket.emit('get-available-space', socket.id);
+    } else {
+        io.emit('game-over', scoreboard, getWinner());
         resettingGame();
+        return;
     }
-    delete users[this.id];
+
+};
+
+// Updating scoreboard for front end
+function updateScoreBoard(id) {
+    scoreboard[game.players[id]] = game.score[id];
+    io.emit('update-score-board', scoreboard, game.playedRounds);
 };
 
 

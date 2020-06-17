@@ -24,20 +24,36 @@ let playersInfo = {
 };
 let scoreboard = {};
 
-// Update score board
-const updateScoreBoard = (scoreboard, rounds) => {
-    document.querySelector('#score-result').innerHTML = Object.entries(scoreboard).map(([key, value]) => {
-        return `<li class="list-item players">${key}: ${value}</li>`
-    }).join('');
-
-    document.querySelector('#played-rounds').innerText = `Rounds: ${rounds} of 10`;
+// Game over because a player left the game
+const gameOverPlayerDisconnected = () => {
+    gamePageEl.classList.add('hide');
+    playerDiconnectedEl.classList.remove('hide');
+    document.querySelector('#too-many-players').classList.add('hide');
 };
 
-// Showing game if number of users is two
-const showGamePage = () => {
-    waitingEl.classList.add('hide');
-    gamePageEl.classList.remove('hide');
-}
+// Loading space for virus to position on
+function getAvailableSpace(id) {
+    const boxHeight = gameBoard.clientHeight;
+    const boxWidth = gameBoard.clientWidth;
+    
+    const y = boxHeight-64;
+    const x = boxWidth-64;
+
+    const availableSpace = {y, x};
+
+    socket.emit('create-random-position-for-virus', availableSpace);
+};
+
+// Randomly position image
+const outputRandomImagePosition = (y, x, delay, user) => {
+    virusImg.style.top = y + "px";
+    virusImg.style.left = x + "px";
+
+    setTimeout(() => {
+        virusImg.classList.remove('hide'),
+        timer = Date.now();
+    }, delay);
+};
 
 // Showing game over and final result
 function showGameOver(scoreboard, winner) {
@@ -54,58 +70,53 @@ function showGameOver(scoreboard, winner) {
         }).join(' & ');
     } else {
         document.querySelector('#winner').innerText = `${winner[0]}`
-    }
+    };
 
     // Show game over page
     gamePageEl.classList.add('hide');
     gameOverResultEl.classList.remove('hide');
     document.querySelector('#too-many-players').classList.add('hide');
-}
-
-// Loading space for virus to position on
-function getAvailableSpace(id) {
-    const boxHeight = gameBoard.clientHeight;
-    const boxWidth = gameBoard.clientWidth;
-    
-    const y = boxHeight-64;
-    const x = boxWidth-64;
-
-    const availableSpace = {y, x};
-
-    socket.emit('create-random-position-for-virus', availableSpace);
-}
-
-// Randomly position image
-const outputRandomImagePosition = (y, x, delay, user) => {
-    virusImg.style.top = y + "px";
-    virusImg.style.left = x + "px";
-
-    setTimeout(() => {
-        virusImg.classList.remove('hide'),
-        timer = Date.now();
-    }, delay);
 };
 
-// Game over because a player left the game
-const gameOverPlayerDisconnected = () => {
-    gamePageEl.classList.add('hide');
-    playerDiconnectedEl.classList.remove('hide');
-    document.querySelector('#too-many-players').classList.add('hide');
-}
+// Showing game if number of users is two
+const showGamePage = () => {
+    waitingEl.classList.add('hide');
+    gamePageEl.classList.remove('hide');
+};
 
-// Listen to click on game
-virusImg.addEventListener('click', (e) => {
-    let clickedTime = Date.now();
-    reactiontime = clickedTime - timer;
+// Too many players in the room
+function tooManyPlayers() {
+    startEl.classList.add('hide');
+    waitingEl.classList.add('hide');
+    document.querySelector('#too-many-players').classList.remove('hide');
+};
 
-    let playersInfo = {
-        id: socket.id,
-        reactiontime,
-    }
+// Update score board
+const updateScoreBoard = (scoreboard, rounds) => {
+    document.querySelector('#score-result').innerHTML = Object.entries(scoreboard).map(([key, value]) => {
+        return `<li class="list-item players">${key}: ${value}</li>`
+    }).join('');
 
-    socket.emit('clicked-virus', playersInfo);
-    virusImg.classList.add('hide');
-})
+    document.querySelector('#played-rounds').innerText = `Rounds: ${rounds} of 10`;
+};
+
+
+// EVENTLISTENERS
+// Restart the game when game has been played
+playAgainBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    gameOverResultEl.classList.add('hide');
+    startEl.classList.remove('hide');
+});
+
+// Restart the game when other user disconnected
+playAgainDisconnectedBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    playerDiconnectedEl.classList.add('hide');
+    startEl.classList.remove('hide');
+});
 
 // Register new user from startpage
 usernameForm.addEventListener('submit', (e) => {
@@ -124,29 +135,22 @@ usernameForm.addEventListener('submit', (e) => {
     });
 });
 
-// Restart the game when game has been played
-playAgainBtn.addEventListener('click', (e) => {
-    e.preventDefault();
+// Listen to click on game
+virusImg.addEventListener('click', (e) => {
+    let clickedTime = Date.now();
+    reactiontime = clickedTime - timer;
 
-    gameOverResultEl.classList.add('hide');
-    startEl.classList.remove('hide');
-})
+    let playersInfo = {
+        id: socket.id,
+        reactiontime,
+    };
 
-// Restart the game when other user disconnected
-playAgainDisconnectedBtn.addEventListener('click', (e) => {
-    e.preventDefault();
+    socket.emit('clicked-virus', playersInfo);
+    virusImg.classList.add('hide');
+});
 
-    playerDiconnectedEl.classList.add('hide');
-    startEl.classList.remove('hide');
-})
 
-// Too many players in the room
-function tooManyPlayers() {
-    startEl.classList.add('hide');
-    waitingEl.classList.add('hide');
-    document.querySelector('#too-many-players').classList.remove('hide');
-}
-
+// SOCKETS
 /**
  * Sockets for user registration and diconnection
  */
